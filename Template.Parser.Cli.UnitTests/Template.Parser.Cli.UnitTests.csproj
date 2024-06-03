@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="exampleTemplates\exampleTemplate01.json" />
+    <None Remove="exampleTemplates\exampleTemplate02.json" />
+    <None Remove="exampleTemplates\exampleTemplate03.json" />
+    <None Remove="exampleTemplates\exampleTemplate04.json" />
+	<None Remove="exampleTemplates\exampleTemplate04Params.json" />
+	<None Remove="exampleTemplates\eslzArm.json" />
+	<None Remove="exampleTemplates\eslzArm.test.param.json" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="exampleTemplates\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\template-parser\Template.Parser.Cli.csproj" />
+  </ItemGroup>
+
+</Project>

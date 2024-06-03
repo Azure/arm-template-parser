@@ -1,14 +1,12 @@
-# Project
+# ARM Template Parser
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+## What is it?
 
-As the maintainer of this project, please make a few updates:
+This is a tool that leverages Microsoft libraries to parse ARM templates offline. It fills out the parameters and interprets any statements to produce an array of resources in json format. The use case for the tool is local parsing of templates as part of automation. Specifically for copying policy assignments from upstream modules to modules written in other IaC languages, such as Terraform and Bicep.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## How to use it?
+
+TBC
 
 ## Contributing
 

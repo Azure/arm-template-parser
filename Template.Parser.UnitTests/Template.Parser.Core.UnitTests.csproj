@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Template.Parser.Core\Template.Parser.Core.csproj" />
+  </ItemGroup>
+	
+  <ItemGroup> 
+    <Content Include="exampleTemplates\**"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content> 
+  </ItemGroup>
+	
+  <ItemGroup>
+	<None Remove="exampleTemplates\exampleTemplate01.json" />
+    <None Remove="exampleTemplates\exampleTemplate02.json" />
+    <None Remove="exampleTemplates\exampleTemplate03.json" />
+  </ItemGroup>
+
+
+</Project>
