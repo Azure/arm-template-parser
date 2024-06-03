@@ -17,6 +17,8 @@
 	<None Remove="exampleTemplates\exampleTemplate04Params.json" />
 	<None Remove="exampleTemplates\eslzArm.json" />
 	<None Remove="exampleTemplates\eslzArm.test.param.json" />
+	<None Remove="exampleTemplates\exampleTemplate05MultipleAssignments.json" />
+	<None Remove="exampleTemplates\exampleTemplate06AssignmentNameVariable.json" />
   </ItemGroup>
 
 	<ItemGroup>

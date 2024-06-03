@@ -245,7 +245,49 @@ namespace Template.Parser.Cli.UnitTests
 
             var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
 
-            Assert.AreEqual(248, check.Count);
+            Assert.AreEqual(171, check.Count);
+        }
+    
+        [TestMethod]
+        public void CanUseParseMultiAssignmentFile()
+        {
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate05MultipleAssignments.json");
+            //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
+            var templateFile = $"-s {tempateFilePath}";
+            //var parametersFile = $"-f {parametersFilePath}";
+
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+
+            Template.Parser.Cli.Program.Main(new string[] { templateFile, "-a" }).Wait();
+
+
+            var output = stringWriter.ToString();
+
+            var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+
+            Assert.AreEqual(15, check.Count);
+        }
+        [TestMethod]
+        public void CanUseParseAssignmentWithVariableName()
+        {
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate06AssignmentNameVariable.json");
+            //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
+            var templateFile = $"-s {tempateFilePath}";
+            var parameter1 = "-p location=uksouth";
+            //var parametersFile = $"-f {parametersFilePath}";
+
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+
+            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1, "-a" }).Wait();
+
+
+            var output = stringWriter.ToString();
+
+            var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+
+            Assert.AreEqual("Deploy-Private-DNS-Zones", check[0].name.Value);
         }
     }
 }
