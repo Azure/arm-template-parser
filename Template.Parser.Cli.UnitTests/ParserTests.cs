@@ -289,5 +289,95 @@ namespace Template.Parser.Cli.UnitTests
 
             Assert.AreEqual("Deploy-Private-DNS-Zones", check[0].name.Value);
         }
+
+        [TestMethod]
+        public void CanUseTypedParametersWithEmptyArray()
+        {
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+            var templateFile = $"-s {tempateFilePath}";
+            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]";
+
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+
+            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+
+
+            var output = stringWriter.ToString();
+            Assert.AreEqual(@"{
+  ""type"": ""Microsoft.Authorization/policyAssignments"",
+  ""apiVersion"": ""2022-06-01"",
+  ""name"": ""DenyAction-Resource-Del"",
+  ""dependsOn"": [],
+  ""properties"": {
+    ""description"": ""This policy enables you to specify the resource types that your organization can protect from accidentals deletion by blocking delete calls using deny action effect."",
+    ""displayName"": ""Do not allow deletion of resource types"",
+    ""policyDefinitionId"": ""/providers/Microsoft.Authorization/policyDefinitions/78460a36-508a-49a4-b2b2-2f5ec564f4bb"",
+    ""enforcementMode"": ""Default"",
+    ""parameters"": {
+      ""effect"": {
+        ""value"": ""DenyAction""
+      },
+      ""listOfResourceTypesDisallowedForDeletion"": {
+        ""value"": []
+      }
+    }
+  }
+}".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
+        }
+    
+        [TestMethod]
+        public void CanUseTypedParametersWithArray()
+        {
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+            var templateFile = $"-s {tempateFilePath}";
+            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]abc,def,ghi";
+
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+
+            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+
+
+            var output = stringWriter.ToString();
+            Assert.AreEqual(@"{
+  ""type"": ""Microsoft.Authorization/policyAssignments"",
+  ""apiVersion"": ""2022-06-01"",
+  ""name"": ""DenyAction-Resource-Del"",
+  ""dependsOn"": [],
+  ""properties"": {
+    ""description"": ""This policy enables you to specify the resource types that your organization can protect from accidentals deletion by blocking delete calls using deny action effect."",
+    ""displayName"": ""Do not allow deletion of resource types"",
+    ""policyDefinitionId"": ""/providers/Microsoft.Authorization/policyDefinitions/78460a36-508a-49a4-b2b2-2f5ec564f4bb"",
+    ""enforcementMode"": ""Default"",
+    ""parameters"": {
+      ""effect"": {
+        ""value"": ""DenyAction""
+      },
+      ""listOfResourceTypesDisallowedForDeletion"": {
+        ""value"": [
+          ""abc"",
+          ""def"",
+          ""ghi""
+        ]
+      }
+    }
+  }
+}".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
+        }
+
+        [TestMethod]
+        public void CannotUseEmptyStringAsParameterValue()
+        {
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+            var templateFile = $"-s {tempateFilePath}";
+            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=";
+
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+
+            Assert.ThrowsExceptionAsync<ArgumentNullException>(() => Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }));
+            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+        }
     }
 }
