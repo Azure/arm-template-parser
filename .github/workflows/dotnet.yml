@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -30,7 +30,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal -c Release --logger trx --results-directory "TestResults"
       working-directory: template-parser
 
-    - name: Upload dotnet test results
+    - name: Upload unit test results
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
