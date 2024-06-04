@@ -28,7 +28,6 @@ jobs:
 
     - name: Test
       run: dotnet test --no-build --verbosity normal -c Release --logger trx --results-directory "TestResults"
-      working-directory: template-parser
 
     - name: Upload unit test results
       uses: actions/upload-artifact@v4
