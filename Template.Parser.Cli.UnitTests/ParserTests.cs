@@ -12,7 +12,8 @@ namespace Template.Parser.Cli.UnitTests
         {
             get
             {
-                return new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.ToString();
+                var directory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
+                return directory != null ? directory.ToString() : string.Empty;
             }
         }
 
@@ -245,7 +246,7 @@ namespace Template.Parser.Cli.UnitTests
 
             var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
 
-            Assert.AreEqual(171, check.Count);
+            Assert.AreEqual(171, check?.Count);
         }
     
         [TestMethod]
@@ -266,7 +267,7 @@ namespace Template.Parser.Cli.UnitTests
 
             var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
 
-            Assert.AreEqual(15, check.Count);
+            Assert.AreEqual(15, check?.Count);
         }
         [TestMethod]
         public void CanUseParseAssignmentWithVariableName()
@@ -287,7 +288,7 @@ namespace Template.Parser.Cli.UnitTests
 
             var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
 
-            Assert.AreEqual("Deploy-Private-DNS-Zones", check[0].name.Value);
+            Assert.AreEqual("Deploy-Private-DNS-Zones", check?[0].name.Value);
         }
 
         [TestMethod]
