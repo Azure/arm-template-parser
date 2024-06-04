@@ -6,7 +6,31 @@ This is a tool that leverages Microsoft libraries to parse ARM templates offline
 
 ## How to use it?
 
-TBC
+You can find example usage over [here](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/blob/d678f4caae1d18bda54e93ad674a658eef6ef4a0/.github/scripts/Invoke-LibraryUpdatePolicyAssignmentArchetypes.ps1#L49).
+
+To run the CLI task, you need to supply any default parameters you'd like to populate and point it at your ARM template.
+
+Here is a PowerShell example
+
+```pwsh
+$sourcePath = "./example-template.json"
+$parametersSourcePath = "./example-template.param.json"
+
+$parsedTemplate = & Template.Parser.Cli "-s $sourcePath" "-f $eslzArmParametersSourcePath" "-a" | Out-String | ConvertFrom-Json
+
+foreach($resource in $parsedTemplate)
+{
+   # do somthing...
+}
+```
+
+## Parameters
+
+* `--sourceTemplate` or `s`: The fully qualified file path for the source ARM template.
+* `--parameter` or `-p`: A parameter key value pair, in the format key=value.
+* `--parameterFilePath` or `-f`: A parameter file path.
+* `--location` or `-l`: The default location value for the template (e.g. uksouth). This defaults to `${default_location}` if not value is supplied.
+* `--all` or `-a`: Whether to return all the resources found in the template. By default it will just return the first resource.
 
 ## Contributing
 
