@@ -21,7 +21,7 @@ namespace Template.Parser.Core
     {
         private readonly string armTemplate;
         private readonly string apiVersion;
-        private readonly ILogger logger;
+        private readonly ILogger? logger;
         private Dictionary<string, List<string>> originalToExpandedMapping = new Dictionary<string, List<string>>();
         private Dictionary<string, string> expandedToOriginalMapping = new Dictionary<string, string>();
         private Dictionary<string, (TemplateResource resource, string expandedPath)> flattenedResources = new Dictionary<string, (TemplateResource, string)>(StringComparer.OrdinalIgnoreCase);
@@ -40,7 +40,7 @@ namespace Template.Parser.Core
         /// <param name="armTemplate">The ARM Template <c>JSON</c>. Must follow this schema: https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#</param>
         /// <param name="apiVersion">The deployment API version. Must be a valid version from the deploymetns list here: https://docs.microsoft.com/azure/templates/microsoft.resources/allversions</param>
         /// <param name="logger">A logger to report errors and debug information</param>
-        public ArmTemplateProcessor(string armTemplate, string apiVersion = "2020-01-01", ILogger logger = null)
+        public ArmTemplateProcessor(string armTemplate, string apiVersion = "2020-01-01", ILogger? logger = null)
         {
             this.armTemplate = armTemplate;
             this.apiVersion = apiVersion;
@@ -141,9 +141,9 @@ namespace Template.Parser.Core
                 if (resource.Copy != null) copyNameMap[resource.Copy.Name.Value] = (resource.OriginalName, i);
             }
 
-            var managementGroupName = metadata["managementGroup"]["name"].ToString();
-            var subscriptionId = metadata["subscription"]["subscriptionId"].ToString();
-            var resourceGroupName = metadata["resourceGroup"]["name"].ToString();
+            var managementGroupName = metadata["managementGroup"]["name"]?.ToString();
+            var subscriptionId = metadata["subscription"]["subscriptionId"]?.ToString();
+            var resourceGroupName = metadata["resourceGroup"]["name"]?.ToString();
 
             try
             {
@@ -196,7 +196,7 @@ namespace Template.Parser.Core
                 resourceInfo.resource.Type.Value = resourceNameAndType.Split(" ")[1];
             }
 
-            if ((template.Outputs?.Count ?? 0) > 0)
+            if ((template.Outputs?.Count ?? 0) > 0 && template.Outputs != null)
             {
                 // Recreate evaluation helper with newly parsed properties
                 evaluationHelper = GetTemplateFunctionEvaluationHelper(template);
@@ -235,10 +235,10 @@ namespace Template.Parser.Core
                 // Each segment of a path in the expanded template corresponds to one resource in the original template,
                 // not necessarily the same index of resource, since copy loops reorder resources after processing.
                 // And each resource in the original template could be copied to multiple locations in the expanded template:
-                string originalPathOfSegmentOfExpandedPath;
+                string? originalPathOfSegmentOfExpandedPath;
                 if (expandedToOriginalMapping.TryGetValue(segmentOfExpandedPath, out originalPathOfSegmentOfExpandedPath))
                 {
-                    if (originalToExpandedMapping.TryGetValue(originalPathOfSegmentOfExpandedPath, out List<string> copiedLocationsOfPathSegment))
+                    if (originalToExpandedMapping.TryGetValue(originalPathOfSegmentOfExpandedPath, out List<string>? copiedLocationsOfPathSegment))
                     {
                         foreach (string copiedLocationOfPathSegment in copiedLocationsOfPathSegment)
                         {
@@ -273,7 +273,7 @@ namespace Template.Parser.Core
         /// <param name="parentName">Name of the parent resource. Used during recursive call.</param>
         /// <param name="parentType">Type of the parent resource. Used during recursive call.</param>
         /// <param name="parentExpandedPath">Path of the parent resource in the expanded template. Used during the recursive call.</param>
-        private void SaveFlattenedResources(TemplateResource[] resources, string parentName = null, string parentType = null, string parentExpandedPath = "")
+        private void SaveFlattenedResources(TemplateResource[] resources, string? parentName = null, string? parentType = null, string parentExpandedPath = "")
         {
             for (int i = 0; i < resources.Length; i++)
             {
@@ -449,7 +449,9 @@ namespace Template.Parser.Core
 
                 foreach (var property in metadataAsJObject.Properties())
                 {
-                    metadataDictionary.Add(property.Name, property.Value.ToObject<JToken>());
+                    var value = property.Value.ToObject<JToken>();
+                    if (value != null)
+                    metadataDictionary.Add(property.Name, value);
                 }
 
                 return metadataDictionary;
@@ -477,18 +479,18 @@ namespace Template.Parser.Core
 
             if (parametersObject["parameters"] == null)
             {
-                throw new Exception("Parameteres property is not specified in the ARM Template parameters provided. Please ensure ARM Template parameters follows the following JSON schema https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#");
+                throw new Exception("Parameters property is not specified in the ARM Template parameters provided. Please ensure ARM Template parameters follows the following JSON schema https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#");
             }
 
             foreach (var parameter in parametersObject.InsensitiveToken("parameters").Value<JObject>()?.Properties() ?? Enumerable.Empty<JProperty>())
             {
-                JToken parameterValueAsJToken = parameter.Value.ToObject<JObject>().Property("value")?.Value;
+                JToken? parameterValueAsJToken = parameter.Value.ToObject<JObject>()?.Property("value")?.Value;
 
                 // See if "reference" was specified instead of "value"
                 bool isReference = false;
                 if (parameterValueAsJToken == null)
                 {
-                    parameterValueAsJToken = parameter.Value.ToObject<JObject>().Property("reference")?.Value;
+                    parameterValueAsJToken = parameter.Value.ToObject<JObject>()?.Property("reference")?.Value;
                     if (parameterValueAsJToken != null) isReference = true;
                 }
 
