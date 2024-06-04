@@ -127,12 +127,6 @@ namespace Template.Parser.Core
 
             TemplateEngine.ValidateTemplate(template, apiVersion, TemplateDeploymentScope.NotSpecified);
 
-            TemplateEngine.ParameterizeTemplate(
-                inputParameters: parameters,
-                template: template,
-                metadata: metadata,
-                diagnostics: null);
-
             SetOriginalResourceNames(template);
 
             // If there are resources using copies, the original resource will
@@ -153,7 +147,7 @@ namespace Template.Parser.Core
 
             try
             {
-                TemplateEngine.ProcessTemplateLanguageExpressions(managementGroupName, subscriptionId, resourceGroupName, template, apiVersion, null);
+                TemplateEngine.ProcessTemplateLanguageExpressions(managementGroupName, subscriptionId, resourceGroupName, template, apiVersion, parameters, metadata, null);
             }
             catch (Exception ex)
             {
@@ -371,12 +365,15 @@ namespace Template.Parser.Core
             var variablesLookup = template.Variables.CoalesceEnumerable().ToInsensitiveDictionary(
                 keySelector: variable => variable.Key,
                 elementSelector: variable => variable.Value);
+                          
+            var schemaValidationContext = SchemaValidationContext.ForTemplate(template);
 
             helper.Initialize(
                 metadata: template.Metadata,
                 functionsLookup: functionsLookup,
                 parametersLookup: parametersLookup,
                 variablesLookup: variablesLookup,
+                validationContext: schemaValidationContext,
                 diagnostics: null);
 
             // Set reference lookup
