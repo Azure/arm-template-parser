@@ -38,7 +38,7 @@ foreach($resource in $parsedTemplate)
 * `--sourceTemplate` or `s`: The fully qualified file path for the source ARM template.
 * `--parameter` or `-p`: A parameter key value pair, in the format key=value.
 * `--parameterFilePath` or `-f`: A parameter file path.
-* `--location` or `-l`: The default location value for the template (e.g. uksouth). This defaults to `${default_location}` if not value is supplied.
+* `--location` or `-l`: The default location value for the template (e.g. uksouth). This defaults to `${default_location}` if no value is supplied.
 * `--all` or `-a`: Whether to return all the resources found in the template. By default it will just return the first resource.
 
 ## Contributing
