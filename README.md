@@ -4,13 +4,22 @@
 
 This is a tool that leverages Microsoft libraries to parse ARM templates offline. It fills out the parameters and interprets any statements to produce an array of resources in json format. The use case for the tool is local parsing of templates as part of automation. Specifically for copying policy assignments from upstream modules to modules written in other IaC languages, such as Terraform and Bicep.
 
+## How to install
+
+Download the binary from the [latest release](https://github.com/Azure/arm-template-parser/releases). There are Linux or Windows versions:
+
+* `Template.Parser.Cli`: Linux
+* `Template.Parser.Cli.exe`: Windows
+
+Save it somewhere in your path.
+
 ## How to use it?
 
 You can find example usage over [here](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/blob/d678f4caae1d18bda54e93ad674a658eef6ef4a0/.github/scripts/Invoke-LibraryUpdatePolicyAssignmentArchetypes.ps1#L49).
 
 To run the CLI task, you need to supply any default parameters you'd like to populate and point it at your ARM template.
 
-Here is a PowerShell example
+Here is a PowerShell example:
 
 ```pwsh
 $sourcePath = "./example-template.json"
