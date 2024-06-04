@@ -110,6 +110,10 @@ namespace Template.Parser.Cli
             foreach (var parameter in parameters)
             {
                 var split = parameter.Trim().Split('=');
+                if (split.Length == 1)
+                {
+                    throw new ArgumentNullException("Parameters must be in the format key=value");
+                }
                 var value = split[1];
                 if (value.StartsWith("[[["))
                 {
@@ -118,6 +122,19 @@ namespace Template.Parser.Cli
                     {
                         case "Int64":
                             jsonParameters[split[0]] = new JObject(new JProperty("value", Int64.Parse(typeValueSplit[1])));
+                            break;
+
+                        case "Array":
+                            string[] array;
+                            if(typeValueSplit.Length == 1)
+                            {
+                                array = new string[0];
+                            }
+                            else
+                            {
+                                array = typeValueSplit[1].Split(',');
+                            }
+                            jsonParameters[split[0]] = new JObject(new JProperty("value", new JArray(array)));
                             break;
 
                         default:
