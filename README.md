@@ -1,3 +1,5 @@
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Azure/arm-template-parser/badge)](https://scorecard.dev/viewer/?uri=github.com/Azure/arm-template-parser)
+
 # ARM Template Parser
 
 ## What is it?
