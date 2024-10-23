@@ -39,6 +39,13 @@ jobs:
     - name: Publish Linux
       run: dotnet publish --no-restore --no-build -r linux-x64 -c Release
       working-directory: template-parser
+
+    - name: Publish Linux (ARM64)
+      run: |
+        dotnet publish --no-restore --no-build -r linux-arm64 -c Release
+        # Rename ARM release, as the name will otherwise collide with the linux-x64 release
+        cp ./template-parser/bin/Release/net7.0/linux-arm64/Template.Parser.Cli ./template-parser/bin/Release/net7.0/linux-arm64/Template.Parser.Cli.arm64
+      working-directory: template-parser
       
     - name: Publish Windows
       run: dotnet publish -r win-x64 -c Release
@@ -49,4 +56,5 @@ jobs:
       with:
         files: |
           ./template-parser/bin/Release/net7.0/linux-x64/publish/Template.Parser.Cli
+          ./template-parser/bin/Release/net7.0/linux-arm64/publish/Template.Parser.Cli.arm64
           ./template-parser/bin/Release/net7.0/win-x64/publish/Template.Parser.Cli.exe
