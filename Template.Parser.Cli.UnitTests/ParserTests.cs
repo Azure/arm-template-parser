@@ -245,8 +245,11 @@ namespace Template.Parser.Cli.UnitTests
       var output = stringWriter.ToString();
 
       var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+      var nonEnforcedPolicy = check?.FirstOrDefault(x => x.name.ToString().StartsWith("alz-wsCMK"));
+      var nonEnforcedPolicyEnforcementMode = nonEnforcedPolicy?.properties.parameters.enforcementMode.value.ToString();
 
-      Assert.AreEqual(171, check?.Count);
+      Assert.AreEqual("DoNotEnforce", nonEnforcedPolicyEnforcementMode);
+      Assert.AreEqual(205, check?.Count);
     }
 
     [TestMethod]
