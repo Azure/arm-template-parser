@@ -55,7 +55,7 @@ namespace Template.Parser.Cli
             {
                 RunParser(sourceTemplate.Trim(), parameters, parametersFilePath, location, returnAll);
             },
-            sourceTemplateOption, 
+            sourceTemplateOption,
             parametersOption,
             parametersFilePathOption,
             locationOption,
@@ -65,7 +65,7 @@ namespace Template.Parser.Cli
         }
 
         static void RunParser(string sourceTemplate, List<string> parameters, string parameterFilePath, string location, bool returnAll)
-        {            
+        {
             if(string.IsNullOrEmpty(location))
             {
                 location = "${default_location}";
@@ -73,6 +73,7 @@ namespace Template.Parser.Cli
 
             var defaults = PlaceholderInputGenerator.GeneratePlaceholderDeploymentMetadata(location);
 
+            sourceTemplate = sourceTemplate.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
             Debug.WriteLine($"Reading {sourceTemplate}");
             var template = File.ReadAllText(sourceTemplate);
 
@@ -82,6 +83,7 @@ namespace Template.Parser.Cli
 
             if (!string.IsNullOrEmpty(parameterFilePath))
             {
+                parameterFilePath = parameterFilePath.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
                 var parametersFile = File.ReadAllText(parameterFilePath.Trim());
                 result = parser.ProcessTemplate(parametersFile, defaults);
             }
