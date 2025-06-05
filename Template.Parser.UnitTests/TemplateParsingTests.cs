@@ -65,6 +65,42 @@ namespace Template.Parser.UnitTests
 
         }
 
+                [TestMethod]
+        public void CanParseAndConvertToJsonStringWithEnforcementMode()
+        {
+            var templateJson = File.ReadAllText($"{AssemblyPath}/exampleTemplates/exampleTemplate04.json");
+            var templateParser = new ArmTemplateProcessor(templateJson);
+            var result = templateParser.ProcessTemplate();
+
+            var resultJson = JsonConvert.SerializeObject(result.SelectToken("resources")[0], Formatting.Indented);
+
+            var expectedResult = @"{
+  ""type"": ""Microsoft.Authorization/policyAssignments"",
+  ""apiVersion"": ""2019-09-01"",
+  ""name"": ""Audit-AppGW-WAF"",
+  ""dependsOn"": [],
+  ""properties"": {
+    ""description"": ""Assign the WAF should be enabled for Application Gateway audit policy."",
+    ""displayName"": ""Web Application Firewall (WAF) should be enabled for Application Gateway"",
+    ""policyDefinitionId"": ""/providers/Microsoft.Authorization/policyDefinitions/564feb30-bf6a-4854-b4bb-0d2d2d1e6c66"",
+    ""enforcementMode"": ""DoNotEnforce"",
+    ""nonComplianceMessages"": [
+      {
+        ""message"": ""Web Application Firewall (WAF) should be enabled for Application Gateway.""
+      }
+    ],
+    ""parameters"": {
+      ""effect"": {
+        ""value"": ""Audit""
+      }
+    }
+  }
+}";
+            Debug.Write(resultJson);
+            Assert.AreEqual(expectedResult.Replace("\r\n", "\n"), resultJson.Replace("\r\n", "\n"));
+
+        }
+
 
         [TestMethod]
         public void CanParseAndConvertToJsonStringWithScope()

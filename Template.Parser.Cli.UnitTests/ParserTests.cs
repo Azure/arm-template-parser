@@ -5,26 +5,26 @@ using System.Xml.Linq;
 
 namespace Template.Parser.Cli.UnitTests
 {
-    [TestClass]
-    public class ParserTests
+  [TestClass]
+  public class ParserTests
+  {
+    public string AssemblyPath
     {
-        public string AssemblyPath
-        {
-            get
-            {
-                var directory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
-                return directory != null ? directory.ToString() : string.Empty;
-            }
-        }
+      get
+      {
+        var directory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
+        return directory != null ? directory.ToString() : string.Empty;
+      }
+    }
 
-        [TestMethod]
-        public void CanParseParameters()
-        {
-            var parameters = new List<string> { "location=${default_location}", "properties.scope=${current_scope_resource_id}" };
+    [TestMethod]
+    public void CanParseParameters()
+    {
+      var parameters = new List<string> { "location=${default_location}", "properties.scope=${current_scope_resource_id}" };
 
-            var parsedParameters = Template.Parser.Cli.Program.BuildParameters(parameters);
+      var parsedParameters = Template.Parser.Cli.Program.BuildParameters(parameters);
 
-            Assert.AreEqual(@"{
+      Assert.AreEqual(@"{
   ""parameters"": {
     ""location"": {
       ""value"": ""${default_location}""
@@ -35,23 +35,23 @@ namespace Template.Parser.Cli.UnitTests
   }
 }".Replace("\r\n", "\n"), parsedParameters.Replace("\r\n", "\n"));
 
-        }
+    }
 
-        [TestMethod]
-        public void CanUseDefaultsAndParametersInCLi()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate03.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameters = "-p logAnalyticsResourceId=/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/${root_scope_id}-mgmt/providers/Microsoft.OperationalInsights/workspaces/${root_scope_id}-la";
+    [TestMethod]
+    public void CanUseDefaultsAndParametersInCLi()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate03.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameters = "-p logAnalyticsResourceId=/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/${root_scope_id}-mgmt/providers/Microsoft.OperationalInsights/workspaces/${root_scope_id}-la";
 
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameters }).Wait();
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameters }).Wait();
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2019-09-01"",
   ""name"": ""Deploy-VMSS-Monitoring"",
@@ -72,21 +72,21 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
-        [TestMethod]
-        public void CanUseDefaultsAndNoParametersInCLi()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate03.json");
-            var templateFile = $"-s {tempateFilePath}";
-            
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+    [TestMethod]
+    public void CanUseDefaultsAndNoParametersInCLi()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate03.json");
+      var templateFile = $"-s {tempateFilePath}";
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile }).Wait();
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      Template.Parser.Cli.Program.Main(new string[] { templateFile }).Wait();
+
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2019-09-01"",
   ""name"": ""Deploy-VMSS-Monitoring"",
@@ -107,23 +107,23 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
-        [TestMethod]
-        public void CanUseParametersInForNonCompliance()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate01.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameters = "-p nonComplianceMessagePlaceholder={donotchange}";
+    [TestMethod]
+    public void CanUseParametersInForNonCompliance()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate01.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameters = "-p nonComplianceMessagePlaceholder={donotchange}";
 
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameters }).Wait();
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameters }).Wait();
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2019-09-01"",
   ""name"": ""Audit-AppGW-WAF"",
@@ -145,25 +145,25 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
 
-        [TestMethod]
-        public void CanUseTypedParameters()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameter1 = "-p stringExample=[[[String]]]ThisIsAString";
-            var parameter2 = "-p numberExample=[[[Int64]]]123";
+    [TestMethod]
+    public void CanUseTypedParameters()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameter1 = "-p stringExample=[[[String]]]ThisIsAString";
+      var parameter2 = "-p numberExample=[[[Int64]]]123";
 
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1, parameter2 }).Wait();
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1, parameter2 }).Wait();
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2019-09-01"",
   ""name"": ""Audit-AppGW-WAF"",
@@ -185,25 +185,25 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
-        [TestMethod]
-        public void CanUseParametersFile()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04.json");
-            var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04Params.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parametersFile = $"-f {parametersFilePath}";
-
-
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parametersFile }).Wait();
+    [TestMethod]
+    public void CanUseParametersFile()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04.json");
+      var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate04Params.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parametersFile = $"-f {parametersFilePath}";
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
+
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parametersFile }).Wait();
+
+
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2019-09-01"",
   ""name"": ""Audit-AppGW-WAF"",
@@ -225,87 +225,87 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
-        [TestMethod]
-        public void CanUseParseEslzFile()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.json");
-            var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parametersFile = $"-f {parametersFilePath}";
-
-
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parametersFile, "-a" }).Wait();
+    [TestMethod]
+    public void CanUseParseEslzFile()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.json");
+      var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parametersFile = $"-f {parametersFilePath}";
 
 
-            var output = stringWriter.ToString();
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-            var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
-
-            Assert.AreEqual(171, check?.Count);
-        }
-    
-        [TestMethod]
-        public void CanUseParseMultiAssignmentFile()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate05MultipleAssignments.json");
-            //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
-            var templateFile = $"-s {tempateFilePath}";
-            //var parametersFile = $"-f {parametersFilePath}";
-
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, "-a" }).Wait();
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parametersFile, "-a" }).Wait();
 
 
-            var output = stringWriter.ToString();
+      var output = stringWriter.ToString();
 
-            var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+      var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
 
-            Assert.AreEqual(15, check?.Count);
-        }
-        [TestMethod]
-        public void CanUseParseAssignmentWithVariableName()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate06AssignmentNameVariable.json");
-            //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameter1 = "-p location=uksouth";
-            //var parametersFile = $"-f {parametersFilePath}";
+      Assert.AreEqual(171, check?.Count);
+    }
 
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+    [TestMethod]
+    public void CanUseParseMultiAssignmentFile()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate05MultipleAssignments.json");
+      //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
+      var templateFile = $"-s {tempateFilePath}";
+      //var parametersFile = $"-f {parametersFilePath}";
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1, "-a" }).Wait();
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
 
-
-            var output = stringWriter.ToString();
-
-            var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
-
-            Assert.AreEqual("Deploy-Private-DNS-Zones", check?[0].name.Value);
-        }
-
-        [TestMethod]
-        public void CanUseTypedParametersWithEmptyArray()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]";
-
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, "-a" }).Wait();
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var output = stringWriter.ToString();
+
+      var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+
+      Assert.AreEqual(15, check?.Count);
+    }
+    [TestMethod]
+    public void CanUseParseAssignmentWithVariableName()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate06AssignmentNameVariable.json");
+      //var parametersFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "eslzArm.test.param.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameter1 = "-p location=uksouth";
+      //var parametersFile = $"-f {parametersFilePath}";
+
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
+
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1, "-a" }).Wait();
+
+
+      var output = stringWriter.ToString();
+
+      var check = JsonConvert.DeserializeObject<List<dynamic>>(output);
+
+      Assert.AreEqual("Deploy-Private-DNS-Zones", check?[0].name.Value);
+    }
+
+    [TestMethod]
+    public void CanUseTypedParametersWithEmptyArray()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]";
+
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
+
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+
+
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2022-06-01"",
   ""name"": ""DenyAction-Resource-Del"",
@@ -325,23 +325,23 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
-    
-        [TestMethod]
-        public void CanUseTypedParametersWithArray()
-        {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
-            var templateFile = $"-s {tempateFilePath}";
-            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]abc,def,ghi";
+    }
 
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
+    [TestMethod]
+    public void CanUseTypedParametersWithArray()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]abc,def,ghi";
 
-            Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
+
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
 
 
-            var output = stringWriter.ToString();
-            Assert.AreEqual(@"{
+      var output = stringWriter.ToString();
+      Assert.AreEqual(@"{
   ""type"": ""Microsoft.Authorization/policyAssignments"",
   ""apiVersion"": ""2022-06-01"",
   ""name"": ""DenyAction-Resource-Del"",
@@ -365,20 +365,57 @@ namespace Template.Parser.Cli.UnitTests
     }
   }
 }".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
-        }
+    }
 
-        [TestMethod]
-        public void CannotUseEmptyStringAsParameterValue()
+    [TestMethod]
+    public void CannotUseEmptyStringAsParameterValue()
+    {
+      var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+      var templateFile = $"-s {tempateFilePath}";
+      var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=";
+
+      var stringWriter = new StringWriter();
+      Console.SetOut(stringWriter);
+
+      Assert.ThrowsExceptionAsync<ArgumentNullException>(() => Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }));
+      Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
+    }
+
+            [TestMethod]
+        public void CanUseTypedParametersWithDoNotEnforce()
         {
-            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate07.json");
+            var tempateFilePath = Path.Combine(AssemblyPath, "exampleTemplates", "exampleTemplate08.json");
             var templateFile = $"-s {tempateFilePath}";
-            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=";
+            var parameter1 = "-p listOfResourceTypesDisallowedForDeletion=[[[Array]]]";
 
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
 
-            Assert.ThrowsExceptionAsync<ArgumentNullException>(() => Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }));
             Template.Parser.Cli.Program.Main(new string[] { templateFile, parameter1 }).Wait();
-        }
+
+
+            var output = stringWriter.ToString();
+            Assert.AreEqual(@"{
+  ""type"": ""Microsoft.Authorization/policyAssignments"",
+  ""apiVersion"": ""2022-06-01"",
+  ""name"": ""DenyAction-Resource-Del"",
+  ""dependsOn"": [],
+  ""properties"": {
+    ""description"": ""This policy enables you to specify the resource types that your organization can protect from accidentals deletion by blocking delete calls using deny action effect."",
+    ""displayName"": ""Do not allow deletion of resource types"",
+    ""policyDefinitionId"": ""/providers/Microsoft.Authorization/policyDefinitions/78460a36-508a-49a4-b2b2-2f5ec564f4bb"",
+    ""enforcementMode"": ""DoNotEnforce"",
+    ""parameters"": {
+      ""effect"": {
+        ""value"": ""DenyAction""
+      },
+      ""listOfResourceTypesDisallowedForDeletion"": {
+        ""value"": []
+      }
     }
+  }
+}".Replace("\r\n", "\n"), output.Replace("\r\n", "\n"));
+        }
+  }
 }
+
