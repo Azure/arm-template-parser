@@ -36,18 +36,25 @@ jobs:
         path: TestResults
       if: ${{ always() }}
 
-    - name: Publish Linux
-      run: dotnet publish --no-restore --no-build -r linux-x64 -c Release
+    - name: Publish Linux (x64)
+      run: dotnet publish Template.Parser.Cli.csproj --no-restore --no-build -r linux-x64 -c Release
+      working-directory: template-parser
+
+    - name: Publish Linux (arm64)
+      run: dotnet publish Template.Parser.Cli.csproj --no-restore --no-build -r linux-arm64 -c Release
       working-directory: template-parser
 
     - name: Publish Windows
-      run: dotnet publish -r win-x64 -c Release
+      run: dotnet publish Template.Parser.Cli.csproj -r win-x64 -c Release
+      working-directory: template-parser
 
     - name: Publish MacOS (arm)
-      run: dotnet publish --no-restore --no-build -r osx-arm64 -c Release
+      run: dotnet publish Template.Parser.Cli.csproj --no-restore --no-build -r osx-arm64 -c Release
+      working-directory: template-parser
 
     - name: Publish MacOS (x64)
-      run: dotnet publish --no-restore --no-build -r osx-x64 -c Release
+      run: dotnet publish Template.Parser.Cli.csproj --no-restore --no-build -r osx-x64 -c Release
+      working-directory: template-parser
 
     - name: Release
       uses: softprops/action-gh-release@v2
@@ -55,6 +62,7 @@ jobs:
       with:
         files: |
           ./template-parser/bin/Release/net8.0/linux-x64/publish/Template.Parser.Cli
+          ./template-parser/bin/Release/net8.0/linux-arm64/publish/Template.Parser.Cli
           ./template-parser/bin/Release/net8.0/win-x64/publish/Template.Parser.Cli.exe
           ./template-parser/bin/Release/net8.0/osx-arm64/publish/Template.Parser.Cli
           ./template-parser/bin/Release/net8.0/osx-x64/publish/Template.Parser.Cli
