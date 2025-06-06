@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -22,13 +22,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Template.Parser.Core\Template.Parser.Core.csproj" />
   </ItemGroup>
-	
-  <ItemGroup> 
-    <Content Include="exampleTemplates\**"> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
-    </Content> 
+
+  <ItemGroup>
+    <Content Include="exampleTemplates\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-	
+
   <ItemGroup>
 	<None Remove="exampleTemplates\exampleTemplate01.json" />
     <None Remove="exampleTemplates\exampleTemplate02.json" />
