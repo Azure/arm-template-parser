@@ -54,7 +54,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          ./template-parser/bin/Release/net7.0/linux-x64/publish/Template.Parser.Cli
-          ./template-parser/bin/Release/net7.0/win-x64/publish/Template.Parser.Cli.exe
-          ./template-parser/bin/Release/net7.0/osx-arm64/publish/Template.Parser.Cli
-          ./template-parser/bin/Release/net7.0/osx-x64/publish/Template.Parser.Cli
+          ./template-parser/bin/Release/net8.0/linux-x64/publish/Template.Parser.Cli
+          ./template-parser/bin/Release/net8.0/win-x64/publish/Template.Parser.Cli.exe
+          ./template-parser/bin/Release/net8.0/osx-arm64/publish/Template.Parser.Cli
+          ./template-parser/bin/Release/net8.0/osx-x64/publish/Template.Parser.Cli
